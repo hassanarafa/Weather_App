@@ -7,12 +7,11 @@ import 'package:provider/provider.dart';
 import '../Models/Weather_Models.dart';
 
 class Search extends StatelessWidget {
-  String? CityName;
-  Search({this.updateUi});
-  VoidCallback? updateUi;
+  Search({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String? CityName;
     return Scaffold(
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle(
