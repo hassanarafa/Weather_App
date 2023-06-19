@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_14/Services/Weather_Service.dart';
-import 'package:flutter_application_14/provider/WeatherProvider.dart';
-import 'package:provider/provider.dart';
-
-import '../Models/Weather_Models.dart';
+import 'package:flutter_application_14/cubit/cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Search extends StatelessWidget {
   Search({super.key});
@@ -24,15 +21,11 @@ class Search extends StatelessWidget {
           padding: EdgeInsets.all(20),
           child: Center(
               child: TextField(
-            onSubmitted: (value) async {
+            onSubmitted: (value) {
               CityName = value;
-              Weather_Service Weather = Weather_Service();
-              WeatherModel? model =
-                  await Weather.getWeather(CityName: CityName!);
-              Provider.of<WeatherProvider>(context, listen: false).weatherData =
-                  model;
-              Provider.of<WeatherProvider>(context, listen: false).cityName =
-                  CityName;
+              BlocProvider.of<weather_cubit>(context)
+                  .getWeather(CityName: CityName!);
+              BlocProvider.of<weather_cubit>(context).CityName = CityName;
               Navigator.pop(context);
             },
             cursorColor: Color.fromARGB(255, 172, 92, 32),

@@ -4,7 +4,8 @@ import 'package:flutter_application_14/cubit/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class weather_cubit extends Cubit<Weather_States> {
-  weather_cubit(this.weatherservice) : super(weatherloading());
+  weather_cubit(this.weatherservice) : super(weatherinitial());
+  String?CityName;
   Weather_Service weatherservice;
   WeatherModel? weatherModel;
   void getWeather({required String CityName}) async {

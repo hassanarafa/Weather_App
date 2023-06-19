@@ -1,138 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_14/Pages/Search_Page.dart';
-import 'package:flutter_application_14/provider/WeatherProvider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_application_14/cubit/states.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MyWidget extends StatelessWidget {
+import '../cubit/cubit.dart';
+import '../widgets/Success.dart';
+import '../widgets/failure.dart';
+
+class homePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Provider.of<WeatherProvider>(context, listen: true).weatherData ==
-              null
-          ? AppBar(
-              title: Text('Weather App'),
-              systemOverlayStyle:
-                  SystemUiOverlayStyle(statusBarColor: Colors.blue),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Search(),
-                          ));
-                    },
-                    icon: Icon(Icons.search))
-              ],
-            )
-          : AppBar(
-              title: Text('Weather App'),
-              elevation: 0,
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Provider.of<WeatherProvider>(context)
-                    .weatherData!
-                    .getColor(),
-              ),
-              backgroundColor:
-                  Provider.of<WeatherProvider>(context).weatherData!.getColor(),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Search(),
-                          ));
-                    },
-                    icon: Icon(Icons.search))
-              ],
-            ),
-      body: Provider.of<WeatherProvider>(context).weatherData == null
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'there is no weather 😔 start',
-                    style: TextStyle(
-                      fontSize: 30,
-                    ),
+    return BlocBuilder<weather_cubit, Weather_States>(
+        builder: (context, state) {
+      return Scaffold(
+          appBar: BlocProvider.of<weather_cubit>(context).weatherModel == null
+              ? AppBar(
+                  title: Text('Weather App'),
+                  systemOverlayStyle:
+                      SystemUiOverlayStyle(statusBarColor: Colors.blue),
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Search(),
+                              ));
+                        },
+                        icon: Icon(Icons.search))
+                  ],
+                )
+              : AppBar(
+                  title: Text('Weather App'),
+                  elevation: 0,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: BlocProvider.of<weather_cubit>(context)
+                        .weatherModel!
+                        .getColor(),
                   ),
-                  Text(
-                    'searching now 🔍',
-                    style: TextStyle(
-                      fontSize: 30,
-                    ),
-                  )
-                ],
-              ),
-            )
-          : Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Provider.of<WeatherProvider>(context).weatherData!.getColor(),
-                  Colors.white,
-                ],
-              )),
-              child: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        Provider.of<WeatherProvider>(context).cityName!,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 50),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        Provider.of<WeatherProvider>(context)
-                            .weatherData!
-                            .Last_Updated,
-                        style: TextStyle(fontSize: 25),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Image.asset(Provider.of<WeatherProvider>(context)
-                              .weatherData!
-                              .getImage()),
-                          Text(
-                            "${Provider.of<WeatherProvider>(context).weatherData!.Temp_C.toInt()}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 30),
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                "Wind_Degree : ${Provider.of<WeatherProvider>(context).weatherData!.Wind_Degree}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        Provider.of<WeatherProvider>(context)
-                            .weatherData!
-                            .WeatherStateName,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 50),
-                      ),
-                    ]),
-              ),
-            ),
-    );
+                  backgroundColor: BlocProvider.of<weather_cubit>(context)
+                      .weatherModel!
+                      .getColor(),
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Search(),
+                              ));
+                        },
+                        icon: Icon(Icons.search))
+                  ],
+                ),
+          body: (state is weatherloading)
+              ? CircularProgressIndicator()
+              : (state is weathersuccess)
+                  ? Success()
+                  : (state is weatherfailure)
+                      ? Text("there is an error")
+                      : failure());
+    });
   }
 }
